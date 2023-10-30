@@ -14,6 +14,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -65,7 +66,7 @@ public class User {
   private String oauthKey;
 
   @NonNull
-  @OneToMany(mappedBy = "user", fetch = FetchType.LAZY,
+  @OneToMany(mappedBy = "user", fetch = FetchType.EAGER,
       cascade = CascadeType.ALL, orphanRemoval = true)
   @OrderBy("name ASC")
   @JsonIgnore
@@ -111,6 +112,11 @@ public class User {
   @NonNull
   public List<Passphrase> getPassphrases() {
     return passphrases;
+  }
+
+  @PrePersist
+  private void generateKey(){
+    key = UUID.randomUUID();
   }
 
 }

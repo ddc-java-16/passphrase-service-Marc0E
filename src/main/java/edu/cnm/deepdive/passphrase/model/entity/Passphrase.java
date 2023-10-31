@@ -10,6 +10,7 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -37,6 +38,7 @@ public class Passphrase {
   @Id
   @NonNull
   @Column(name = "passphrase_id", updatable = false)
+  @GeneratedValue
   @JsonIgnore
   private Long id;
 
@@ -76,7 +78,8 @@ public class Passphrase {
   private List<Word> words = new LinkedList<>();
 
   @Transient
-  private transient int length;
+  @JsonProperty(access = Access.READ_WRITE)
+  private int length;
 
   @NonNull
   public Long getId() {

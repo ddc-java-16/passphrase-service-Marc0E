@@ -10,6 +10,8 @@ public interface AbstractPassphraseService {
   List<Passphrase> readAll(User user);
   Passphrase read(User user, UUID key);
 
+  List<Passphrase> search(User user, String fragment);
+
   Passphrase create(User user, Passphrase passphrase);
 
   void delete(User user, UUID key);

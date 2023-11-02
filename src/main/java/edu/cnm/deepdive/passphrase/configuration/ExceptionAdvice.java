@@ -1,5 +1,6 @@
 package edu.cnm.deepdive.passphrase.configuration;
 
+import java.sql.SQLException;
 import java.util.NoSuchElementException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,4 +16,11 @@ public class ExceptionAdvice {
   @ExceptionHandler(IllegalArgumentException.class)
   @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Request parameters or payload are invalid.")
   public void badRequest(){}
+
+  @ExceptionHandler(SQLException.class)
+  @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Request content violates SQL constraints; "
+      + "no written to database.")
+  public void sqlConstraintViolation(){
+
+  }
 }

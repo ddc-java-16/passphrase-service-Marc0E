@@ -78,9 +78,15 @@ public class PassphraseService implements AbstractPassphraseService {
                 passphrase.setName(received.getName());
               }
               if(!received.getWords().isEmpty()){
+                passphrase.getWords().forEach(word -> word.setPassphrase(null));
                 passphrase.getWords().clear();
+                int counter = 0;
+                for(Word word: received.getWords()){
+                  word.setPassphrase(passphrase);
+                  word.setOrder(counter++);
+                }
                 passphrase.getWords().addAll(received.getWords());
-                // TODO: 10/30/23 Assign order field.
+
               }
                 return repository.save(passphrase);
             })
@@ -104,6 +110,7 @@ public class PassphraseService implements AbstractPassphraseService {
     return repository
         .findByUserAndKey(user, key)
         .map((passphrase) -> {
+          int [] order = {0};
           passphrase.getWords().clear();
           passphrase.getWords().addAll(
               received.stream()
@@ -111,6 +118,7 @@ public class PassphraseService implements AbstractPassphraseService {
                     Word word = new Word();
                     word.setValue(item);
                     word.setPassphrase(passphrase);
+                    word.setOrder(order[0]++);
                     return word;
                   }).toList()
           );

@@ -1,5 +1,6 @@
 package edu.cnm.deepdive.passphrase.configuration;
 
+import edu.cnm.deepdive.passphrase.service.StorageService.MediaTypeException;
 import java.sql.SQLException;
 import java.util.NoSuchElementException;
 import org.springframework.http.HttpStatus;
@@ -20,7 +21,9 @@ public class ExceptionAdvice {
   @ExceptionHandler(SQLException.class)
   @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "Request content violates SQL constraints; "
       + "no written to database.")
-  public void sqlConstraintViolation(){
+  public void sqlConstraintViolation(){}
 
-  }
+  @ExceptionHandler(MediaTypeException.class)
+  @ResponseStatus(value = HttpStatus.UNSUPPORTED_MEDIA_TYPE, reason = "Upload content type not support.")
+  public void mediaTypeNotInWhitelist(){}
 }

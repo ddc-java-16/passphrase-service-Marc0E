@@ -14,7 +14,6 @@ public class FileStorageConfiguration {
   /** Flag controlling whether the application home directory will be used as the file storage home directory */
   private boolean applicationHome = true;
 
-  private String path;
   private List<String> contentTypes;
   private String directory = "uploads";
   private Pattern subdirectoryPattern = Pattern.compile("^(.{4})(.{2})(.{2}).*$");
@@ -28,14 +27,6 @@ public class FileStorageConfiguration {
 
   public void setApplicationHome(boolean applicationHome) {
     this.applicationHome = applicationHome;
-  }
-
-  public String getPath() {
-    return path;
-  }
-
-  public void setPath(String path) {
-    this.path = path;
   }
 
   public List<String> getContentTypes() {

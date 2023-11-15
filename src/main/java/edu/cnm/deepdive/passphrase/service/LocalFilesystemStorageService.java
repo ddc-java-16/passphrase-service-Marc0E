@@ -4,6 +4,7 @@ import edu.cnm.deepdive.passphrase.configuration.FileStorageConfiguration;
 import edu.cnm.deepdive.passphrase.configuration.FileStorageConfiguration.FilenameProperties;
 import edu.cnm.deepdive.passphrase.configuration.FileStorageConfiguration.FilenameProperties.TimestampProperties;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,7 +27,6 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.http.MediaType;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
-import org.springframework.web.HttpMediaTypeException;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -70,9 +70,9 @@ public class LocalFilesystemStorageService implements
     formatter.setTimeZone(TimeZone.getTimeZone(timestampProperties.getTimeZone()));
   }
   @Override
-  public String store(MultipartFile file) throws IOException, MediaTypeException {
+  public String store(MultipartFile file) throws StorageException, MediaTypeException {
     if(!whitelist.contains(file.getContentType())){
-      throw new MediaTypeException(String.format("Content type %s not supported for storage.", file.getContentType()));
+      throw new MediaTypeException(String.format(INVALID_MEDIA_FORMAT, file.getContentType()));
     }
     String originalFilename = file.getOriginalFilename();
     String newFilename = String.format(
@@ -85,18 +85,26 @@ public class LocalFilesystemStorageService implements
     Path resolvedPath = uploadDirectory.resolve(subdirectory);
     //noinspection ResultOfMethodCallIgnored
     resolvedPath.toFile().mkdirs();
-    Files.copy(file.getInputStream(), resolvedPath.resolve(newFilename));
+    try {
+      Files.copy(file.getInputStream(), resolvedPath.resolve(newFilename));
+    } catch (IOException e) {
+      throw new StorageException(e);
+    }
     return newFilename;
   }
 
   @Override
-  public Resource retrieve(String key) throws IOException {
-    return new UrlResource(resolve(key).toUri());
+  public Resource retrieve(String key) throws StorageException {
+    try {
+      return new UrlResource(resolve(key).toUri());
+    } catch (MalformedURLException e) {
+      throw new StorageException(e);
+    }
   }
 
   @Override
   public boolean delete(String key)
-      throws IOException, UnsupportedOperationException, SecurityException {
+      throws StorageException, UnsupportedOperationException, SecurityException {
     return false;
   }
 

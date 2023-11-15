@@ -90,6 +90,11 @@ public class Passphrase {
   @OrderBy("order ASC")
   private List<Word> words = new LinkedList<>();
 
+  @NonNull
+  @OneToMany(mappedBy = "passphrase", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+  @OrderBy("created DESC")
+  private final List<Attachment> attachments = new LinkedList<>();
+
   @Transient
   @JsonProperty(access = Access.READ_WRITE)
   private int length;
@@ -145,9 +150,14 @@ public class Passphrase {
     return words;
   }
 
+
+
+  public List<Attachment> getAttachments() {
+    return attachments;
+  }
+
   @PrePersist
   private void generateKey(){
     key = UUID.randomUUID();
   }
-
 }
